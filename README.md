@@ -29,24 +29,39 @@ Another critcal feature of SSB is its ability to prevent unwanted tampering and 
 # Install SSB
 1. Setup a Alpine Linux VM with access to your protected internal network.
 2. Ensure that all machines within the internal network, INCULDING THE BASTION, are using key only authentication for SSH!
-3. Install SSB with: `curl https://raw.githubusercontent.com/JustinTimperio/secure-shell-bastion/master/bin/ssb_install.sh | sudo sh` 
+3. Install SSB with: 
+```
+ curl https://raw.githubusercontent.com/JustinTimperio/secure-shell-bastion/master/bin/ssb_install.sh | sudo sh
+``` 
 4. Port forward your SSH Port to an external port on your public IP
 5. Setup your bastion users using the guide below.
 
 
 # Using SSB
--  -l,  --list          List all user accounts
-  `sudo ssb --list`
--  -n,  --new_user      Create a new SSB user account
-  `sudo ssb --new_user USERNAME`
--  -r,  --remove_user   Remove a existing SSB user account
-  `sudo ssb --remove_user USERNAME`
--  -ak, --add_key       Open a users authorized_keys file to add a new key
-  `sudo ssb --add_key USERNAME`
--  -rk, --remove_key    Removes all authorized_keys for a user, locking the account
-  `sudo ssb --remove_key USERNAME`
--  -sp, --show_pub      Show the internal pubkey for a SSB user
-  `sudo ssb --show_pub USERNAME`
+- `-l`, `--list`          List all jailed SSB user accounts
+```
+sudo ssb --list
+```
+- `-n`, `--new_user`      Create a new jailed SSB user account
+```
+sudo ssb --new_user USERNAME
+```
+- `-r`, `--remove_user`   Remove a existing jailed SSB user account
+```
+sudo ssb --remove_user USERNAME
+```
+- `-ak`, `--add_key`       Open a users authorized_keys file to add a new key
+```
+sudo ssb --add_key USERNAME
+```
+- `-rk`, `--remove_key`    Removes all authorized_keys for a user, locking the account
+```
+sudo ssb --remove_key USERNAME
+```
+- `-sp`, `--show_pub`      Show the internal pubkey for a SSB user
+```
+sudo ssb --show_pub USERNAME
+```
 
 
 # Uninstall SSB
