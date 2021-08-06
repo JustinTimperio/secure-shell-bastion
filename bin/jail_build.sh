@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+
 USER_NAME="$1"
 
 echo ''
@@ -26,9 +27,20 @@ link_bin () {
 ###################################
 
 adduser $USER_NAME -D
+addgroup $USER_NAME
+sed -i s/$USER_NAME:!/"$USER_NAME:*"/g /etc/shadow
+mkdir /home/$USER_NAME/etc
+mkdir -p /home/$USER_NAME/home/$USER_NAME/.ssh
+cp -v /etc/passwd /home/$USER_NAME/etc/passwd
+cp -v /etc/group /home/$USER_NAME/etc/group
+
+
+###################################
+# Make Dev
+###################################
+
 mkdir -p /home/$USER_NAME/dev
 cd /home/$USER_NAME/dev
-
 mknod -m 666 null c 1 3
 mknod -m 666 tty c 5 0
 mknod -m 666 zero c 1 5
@@ -67,6 +79,32 @@ link_bin "/bin/sed"
 link_bin "/bin/grep"
 link_bin "/usr/bin/vi"
 link_bin "/usr/bin/nano"
+
+
+###################################
+# Generate User Keys
+###################################
+
+ssh-keygen -b 4096 -f /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa -c bastion -N ''
+sed -i s/root/$USER_NAME/g /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa.pub
+vi /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
+
+# Set Final Perms
+chmod 700 /home/$USER_NAME/home/$USER_NAME
+chmod 700 /home/$USER_NAME/home/$USER_NAME/.ssh
+chown -R $USER_NAME:$USER_NAME /home/$USER_NAME/home/$USER_NAME
+chown root:root /home/$USER_NAME
+chmod 755 /home/$USER_NAME
+
+
+###################################
+# Update SSHD Config
+###################################
+echo "Match User $USER_NAME" >> /etc/ssh/sshd_config
+echo "  ChrootDirectory /home/$USER_NAME" >> /etc/ssh/sshd_config
+echo "  AuthorizedKeysFile /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys" >> /etc/ssh/sshd_config
+/etc/init.d/sshd restart
+
 
 echo ''
 echo "Built chroot jail for user $USER_NAME!"

@@ -7,8 +7,12 @@ jail_remove="$base_path/bin/jail_remove.sh"
 user_add_key="$base_path/bin/key_add.sh"
 user_rm_key="$base_path/bin/key_remove.sh"
 user_show_pub="$base_path/bin/key_list.sh"
-
 list_users="$base_path/bin/list_users.sh"
+
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as sudo or root!"
+  exit
+fi
 
 
 # Parse Args
