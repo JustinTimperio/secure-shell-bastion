@@ -26,29 +26,29 @@ mknod -m 666 random c 1 8
 ###################################
 
 # Core
-"$DIR"/link_bin.sh "/bin/ash"
-"$DIR"/link_bin.sh "/bin/bash"
-"$DIR"/link_bin.sh "/bin/ls"
-"$DIR"/link_bin.sh "/bin/cp"
-"$DIR"/link_bin.sh "/bin/rm"
-"$DIR"/link_bin.sh "/bin/mv"
-"$DIR"/link_bin.sh "/bin/cat"
-"$DIR"/link_bin.sh "/bin/pwd"
-"$DIR"/link_bin.sh "/bin/echo"
-"$DIR"/link_bin.sh "/bin/date"
-"$DIR"/link_bin.sh "/bin/mkdir"
-"$DIR"/link_bin.sh "/bin/touch"
+"$DIR"/bin/link_bin.sh "/bin/ash"
+"$DIR"/bin/link_bin.sh "/bin/bash"
+"$DIR"/bin/link_bin.sh "/bin/ls"
+"$DIR"/bin/link_bin.sh "/bin/cp"
+"$DIR"/bin/link_bin.sh "/bin/rm"
+"$DIR"/bin/link_bin.sh "/bin/mv"
+"$DIR"/bin/link_bin.sh "/bin/cat"
+"$DIR"/bin/link_bin.sh "/bin/pwd"
+"$DIR"/bin/link_bin.sh "/bin/echo"
+"$DIR"/bin/link_bin.sh "/bin/date"
+"$DIR"/bin/link_bin.sh "/bin/mkdir"
+"$DIR"/bin/link_bin.sh "/bin/touch"
 
 # SSH
-"$DIR"/link_bin.sh "/usr/bin/ssh"
-"$DIR"/link_bin.sh "/usr/bin/ssh-add"
-"$DIR"/link_bin.sh "/usr/bin/ssh-keygen"
+"$DIR"/bin/link_bin.sh "/usr/bin/ssh"
+"$DIR"/bin/link_bin.sh "/usr/bin/ssh-add"
+"$DIR"/bin/link_bin.sh "/usr/bin/ssh-keygen"
 
 # Applications
-"$DIR"/link_bin.sh "/bin/sed"
-"$DIR"/link_bin.sh "/bin/grep"
-"$DIR"/link_bin.sh "/usr/bin/vi"
-"$DIR"/link_bin.sh "/usr/bin/nano"
+"$DIR"/bin/link_bin.sh "/bin/sed"
+"$DIR"/bin/link_bin.sh "/bin/grep"
+"$DIR"/bin/link_bin.sh "/usr/bin/vi"
+"$DIR"/bin/link_bin.sh "/usr/bin/nano"
 
 
 ###################################
