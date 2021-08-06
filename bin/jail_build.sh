@@ -1,25 +1,11 @@
 #!/usr/bin/env sh
 
 USER_NAME="$1"
+DIR="$(dirname $(readlink -f $0))"
 
 echo ''
 echo "Building chroot jail for user '$USER_NAME'..."
 echo ''
-
-###################################
-# Finds all shared libs for a bin
-###################################
-
-link_bin () {
-  CHROOT="/home/$USER_NAME"
-  mkdir -p $CHROOT$*
-  cp $* $CHROOT$*
-
-  for i in $( ldd $* | grep -v dynamic | cut -d " " -f 3 | sed 's/://' | sort | uniq )
-    do
-      cp -v --parents $i $CHROOT
-    done
-}
 
 
 ###################################
@@ -40,29 +26,29 @@ mknod -m 666 random c 1 8
 ###################################
 
 # Core
-link_bin "/bin/ash"
-link_bin "/bin/bash"
-link_bin "/bin/ls"
-link_bin "/bin/cp"
-link_bin "/bin/rm"
-link_bin "/bin/mv"
-link_bin "/bin/cat"
-link_bin "/bin/pwd"
-link_bin "/bin/echo"
-link_bin "/bin/date"
-link_bin "/bin/mkdir"
-link_bin "/bin/touch"
+"$DIR"/link_bin.sh "/bin/ash"
+"$DIR"/link_bin.sh "/bin/bash"
+"$DIR"/link_bin.sh "/bin/ls"
+"$DIR"/link_bin.sh "/bin/cp"
+"$DIR"/link_bin.sh "/bin/rm"
+"$DIR"/link_bin.sh "/bin/mv"
+"$DIR"/link_bin.sh "/bin/cat"
+"$DIR"/link_bin.sh "/bin/pwd"
+"$DIR"/link_bin.sh "/bin/echo"
+"$DIR"/link_bin.sh "/bin/date"
+"$DIR"/link_bin.sh "/bin/mkdir"
+"$DIR"/link_bin.sh "/bin/touch"
 
 # SSH
-link_bin "/usr/bin/ssh"
-link_bin "/usr/bin/ssh-add"
-link_bin "/usr/bin/ssh-keygen"
+"$DIR"/link_bin.sh "/usr/bin/ssh"
+"$DIR"/link_bin.sh "/usr/bin/ssh-add"
+"$DIR"/link_bin.sh "/usr/bin/ssh-keygen"
 
 # Applications
-link_bin "/bin/sed"
-link_bin "/bin/grep"
-link_bin "/usr/bin/vi"
-link_bin "/usr/bin/nano"
+"$DIR"/link_bin.sh "/bin/sed"
+"$DIR"/link_bin.sh "/bin/grep"
+"$DIR"/link_bin.sh "/usr/bin/vi"
+"$DIR"/link_bin.sh "/usr/bin/nano"
 
 
 ###################################
@@ -96,24 +82,23 @@ cp -v /etc/group /home/$USER_NAME/etc/group
 
 mkdir -p /home/$USER_NAME/home/$USER_NAME/.ssh
 ssh-keygen -b 4096 -f /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa -C "$USER_NAME"@bastion -N ''
-sed -i s/root/$USER_NAME/g /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa.pub
 vi /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
 
 
 ###################################
 # Set Final Perms
 ###################################
-chown -R root:root /home/$USER_NAME
+chown root:root /home/$USER_NAME
 chown -R $USER_NAME:$USER_NAME /home/$USER_NAME/home/$USER_NAME
 
-chmod 700 /home/$USER_NAME
+chmod 755 /home/$USER_NAME
 chmod -R 755 /home/$USER_NAME/bin
 chmod -R 755 /home/$USER_NAME/lib
-chmod -R 700 /home/$USER_NAME/home/$USER_NAME
+chmod 700 /home/$USER_NAME/home/$USER_NAME
 chmod 700 /home/$USER_NAME/home/$USER_NAME/.ssh
-chmod 600 /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa
-chmod 644 /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa.pub
-chmod 755 /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
+# chmod 600 /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa
+# chmod 644 /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa.pub
+# chmod 755 /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
 
 
 ###################################
