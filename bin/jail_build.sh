@@ -85,7 +85,7 @@ link_bin "/usr/bin/nano"
 # Generate User Keys
 ###################################
 
-ssh-keygen -b 4096 -f /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa -c bastion -N ''
+ssh-keygen -b 4096 -f /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa -F bastion -N ''
 sed -i s/root/$USER_NAME/g /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa.pub
 vi /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
 

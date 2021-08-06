@@ -3,7 +3,7 @@
 INSTALL_PATH="/opt/secure-shell-bastion"
 
 echo "Installing Secure-Shell-Bastion...."
-sudo apk add nano vi openssh sed grep
+sudo apk add nano openssh sed grep
 sudo rm -rf $INSTALL_PATH
 sudo git clone https://github.com/JustinTimperio/secure-shell-bastion.git $INSTALL_PATH
 sudo ln -sf $INSTALL_PATH/ssb.sh /usr/bin/ssb

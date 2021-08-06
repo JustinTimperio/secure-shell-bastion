@@ -9,8 +9,8 @@ user_rm_key="$base_path/bin/key_remove.sh"
 user_show_pub="$base_path/bin/key_list.sh"
 list_users="$base_path/bin/list_users.sh"
 
-if [ "$EUID" -ne 0 ]
-  then echo "Please run as sudo or root!"
+if [ "$(id -u)" -ne 0 ]; then 
+  echo "Please run as sudo or root!"
   exit
 fi
 
@@ -48,8 +48,16 @@ case $1 in
         ;;
 
     *)
-        echo "usage: Secure Shell Bastion (ssb)"
+        echo "usage: Secure Shell Bastion (SSB)"
         echo ""
+        echo "SSB is an automated fake root jail for ssh users using Alpine Linux and MUSL"
+        echo ""
+        echo "-l,  --list                   List all user accounts"
+        echo "-n,  --new_user               Create a new SSB user account"
+        echo "-r,  --remove_user            Remove a existing SSB user account"
+        echo "-ak, --add_key                Open a users authorized_keys file to add a new key"
+        echo "-rk, --remove_key             Removes all authorized_keys for a user, locking the account"
+        echo "-sp, --show_pub               Show the internal pubkey for a SSB user"
         echo ""
         ;;
 esac
