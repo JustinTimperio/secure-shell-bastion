@@ -23,43 +23,16 @@ link_bin () {
 
 
 ###################################
-# Stage New Jailed User 
-###################################
-
-adduser $USER_NAME -D
-sed -i s/$USER_NAME:!/"$USER_NAME:*"/g /etc/shadow
-mkdir /home/$USER_NAME/etc
-mkdir -p /home/$USER_NAME/home/$USER_NAME/.ssh
-cp -v /etc/passwd /home/$USER_NAME/etc/passwd
-cp -v /etc/group /home/$USER_NAME/etc/group
-
-# Clean other user info from fakeroot
-for USER in $(. /opt/secure-shell-bastion/bin/list_users.sh); do
-	if [ $USER -ne $USER_NAME ]; then
-		sed -i "/$USER/d" /home/$USER_NAME/etc/passwd
-	fi
-done
-
-for USER in $(. /opt/secure-shell-bastion/bin/list_users.sh); do
-	if [ $USER -ne $USER_NAME ]; then
-		sed -i "/$USER/d" /home/$USER_NAME/etc/group
-	fi
-done
-
-###################################
 # Make Dev
 ###################################
 
 mkdir -p /home/$USER_NAME/dev
+mkdir /home/$USER_NAME/bin
 cd /home/$USER_NAME/dev
 mknod -m 666 null c 1 3
 mknod -m 666 tty c 5 0
 mknod -m 666 zero c 1 5
 mknod -m 666 random c 1 8
-
-chown root:root /home/$USER_NAME
-chmod 0775 /home/$USER_NAME
-mkdir /home/$USER_NAME/bin
 
 
 ###################################
@@ -93,19 +66,54 @@ link_bin "/usr/bin/nano"
 
 
 ###################################
+# Stage New Jailed User 
+###################################
+
+adduser $USER_NAME -D
+addgroup $USER_NAME $USER_NAME
+sed -i s/$USER_NAME:!/"$USER_NAME:*"/g /etc/shadow
+mkdir /home/$USER_NAME/etc
+cp -v /etc/passwd /home/$USER_NAME/etc/passwd
+cp -v /etc/group /home/$USER_NAME/etc/group
+
+# Clean other users from fakeroot
+#for USER in $(. /opt/secure-shell-bastion/bin/list_users.sh); do
+#       if [ $USER -ne $USER_NAME ]; then
+#               sed -i "/$USER/d" /home/$USER_NAME/etc/passwd
+#       fi
+#done
+#
+#for USER in $(. /opt/secure-shell-bastion/bin/list_users.sh); do
+#       if [ $USER -ne $USER_NAME ]; then
+#               sed -i "/$USER/d" /home/$USER_NAME/etc/group
+#       fi
+#done
+
+
+###################################
 # Generate User Keys
 ###################################
 
+mkdir -p /home/$USER_NAME/home/$USER_NAME/.ssh
 ssh-keygen -b 4096 -f /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa -C "$USER_NAME"@bastion -N ''
 sed -i s/root/$USER_NAME/g /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa.pub
 vi /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
 
+
+###################################
 # Set Final Perms
-chmod 700 /home/$USER_NAME/home/$USER_NAME
-chmod 700 /home/$USER_NAME/home/$USER_NAME/.ssh
+###################################
+chown -R root:root /home/$USER_NAME
 chown -R $USER_NAME:$USER_NAME /home/$USER_NAME/home/$USER_NAME
-chown root:root /home/$USER_NAME
-chmod 755 /home/$USER_NAME
+
+chmod 700 /home/$USER_NAME
+chmod -R 755 /home/$USER_NAME/bin
+chmod -R 755 /home/$USER_NAME/lib
+chmod -R 700 /home/$USER_NAME/home/$USER_NAME
+chmod 700 /home/$USER_NAME/home/$USER_NAME/.ssh
+chmod 600 /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa
+chmod 644 /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa.pub
+chmod 755 /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
 
 
 ###################################
