@@ -27,13 +27,24 @@ link_bin () {
 ###################################
 
 adduser $USER_NAME -D
-addgroup $USER_NAME
 sed -i s/$USER_NAME:!/"$USER_NAME:*"/g /etc/shadow
 mkdir /home/$USER_NAME/etc
 mkdir -p /home/$USER_NAME/home/$USER_NAME/.ssh
 cp -v /etc/passwd /home/$USER_NAME/etc/passwd
 cp -v /etc/group /home/$USER_NAME/etc/group
 
+# Clean other user info from fakeroot
+for USER in $(. /opt/secure-shell-bastion/bin/list_users.sh); do
+	if [ $USER -ne $USER_NAME ]; then
+		sed -i "/$USER/d" /home/$USER_NAME/etc/passwd
+	fi
+done
+
+for USER in $(. /opt/secure-shell-bastion/bin/list_users.sh); do
+	if [ $USER -ne $USER_NAME ]; then
+		sed -i "/$USER/d" /home/$USER_NAME/etc/group
+	fi
+done
 
 ###################################
 # Make Dev
@@ -85,7 +96,7 @@ link_bin "/usr/bin/nano"
 # Generate User Keys
 ###################################
 
-ssh-keygen -b 4096 -f /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa -F bastion -N ''
+ssh-keygen -b 4096 -f /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa -C "$USER_NAME"@bastion -N ''
 sed -i s/root/$USER_NAME/g /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa.pub
 vi /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
 

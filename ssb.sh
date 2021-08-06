@@ -6,17 +6,25 @@ jail_build="$base_path/bin/jail_build.sh"
 jail_remove="$base_path/bin/jail_remove.sh"
 user_add_key="$base_path/bin/key_add.sh"
 user_rm_key="$base_path/bin/key_remove.sh"
-user_show_pub="$base_path/bin/key_list.sh"
+user_show_pub="$base_path/bin/show_pub.sh"
 list_users="$base_path/bin/list_users.sh"
 
 if [ "$(id -u)" -ne 0 ]; then 
-  echo "Please run as sudo or root!"
+  echo "Please run SSB with sudo or as root!"
   exit
 fi
 
 
 # Parse Args
 case $1 in
+    # Takes No Args
+    -l|--list_users)
+	echo "=========================="
+	echo "Secure Shell Bastion Users"
+	echo "=========================="
+        . $list_users
+        ;;
+
     # Takes User as Arg
     -n|--new_user)
         . $jail_build $2
@@ -25,11 +33,6 @@ case $1 in
     # Takes User as Arg
     -r|--remove_user)
         . "$jail_remove" $2
-        ;;
-
-    # Takes No Args
-    -l|--list_users)
-        . $list_users
         ;;
 
     # Takes User as Arg

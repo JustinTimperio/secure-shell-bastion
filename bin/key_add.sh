@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 
 USER_NAME="$1"
-vi /home/"$USER_NAME"/.ssh/authorized_keys
+vi /home/"$USER_NAME"/home/"$USER_NAME"/.ssh/authorized_keys
