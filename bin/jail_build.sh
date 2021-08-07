@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # Startup
-DIR="$(dirname $(readlink -f $0))"
+DIR=$(dirname $(readlink -f "$0"))
 USER_NAME="$1"
 echo "Building chroot jail for user '$USER_NAME'..."
 
@@ -9,9 +9,9 @@ echo "Building chroot jail for user '$USER_NAME'..."
 # Make Dev
 ###################################
 
-mkdir -p /home/$USER_NAME/dev
-mkdir /home/$USER_NAME/bin
-cd /home/$USER_NAME/dev
+mkdir -p /home/"$USER_NAME"/dev
+mkdir /home/"$USER_NAME"/bin
+cd /home/"$USER_NAME"/dev
 mknod -m 666 null c 1 3
 mknod -m 666 tty c 5 0
 mknod -m 666 zero c 1 5
@@ -46,23 +46,23 @@ mknod -m 666 random c 1 8
 # Stage New Jailed User 
 ###################################
 
-adduser $USER_NAME -D
-addgroup $USER_NAME $USER_NAME
-sed -i s/$USER_NAME:!/"$USER_NAME:*"/g /etc/shadow
-mkdir /home/$USER_NAME/etc
-cp -v /etc/passwd /home/$USER_NAME/etc/passwd
-cp -v /etc/group /home/$USER_NAME/etc/group
+adduser "$USER_NAME" -D
+addgroup "$USER_NAME" "$USER_NAME"
+sed -i s/"$USER_NAME":!/"$USER_NAME:*"/g /etc/shadow
+mkdir /home/"$USER_NAME"/etc
+cp -v /etc/passwd /home/"$USER_NAME"/etc/passwd
+cp -v /etc/group /home/"$USER_NAME"/etc/group
 
 # Clean traces of users from fakeroot enviro
 for USER in $(/opt/secure-shell-bastion/bin/list_users.sh); do
       if [ "$USER" != "$USER_NAME" ]; then
-              sed -i "/$USER/d" /home/$USER_NAME/etc/passwd
+              sed -i "/$USER/d" /home/"$USER_NAME"/etc/passwd
       fi
 done
 
 for USER in $(/opt/secure-shell-bastion/bin/list_users.sh); do
-      if [ $USER != $USER_NAME ]; then
-              sed -i "/$USER/d" /home/$USER_NAME/etc/group
+      if [ "$USER" != "$USER_NAME" ]; then
+              sed -i "/$USER/d" /home/"$USER_NAME"/etc/group
       fi
 done
 
@@ -70,26 +70,26 @@ done
 # Generate User Keys
 ###################################
 
-mkdir -p /home/$USER_NAME/home/$USER_NAME/.ssh
-ssh-keygen -b 4096 -f /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa -C "$USER_NAME"@bastion -N ''
-touch /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
-vi /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
+mkdir -p /home/"$USER_NAME"/home/"$USER_NAME"/.ssh
+ssh-keygen -b 4096 -f /home/"$USER_NAME"/home/"$USER_NAME"/.ssh/id_rsa -C "$USER_NAME"@bastion -N ''
+touch /home/"$USER_NAME"/home/"$USER_NAME"/.ssh/authorized_keys
+vi /home/"$USER_NAME"/home/"$USER_NAME"/.ssh/authorized_keys
 
 
 ###################################
 # Set Final Perms
 ###################################
-chown root:root /home/$USER_NAME
-chown -R $USER_NAME:$USER_NAME /home/$USER_NAME/home/$USER_NAME
+chown root:root /home/"$USER_NAME"
+chown -R "$USER_NAME":"$USER_NAME" /home/"$USER_NAME"/home/"$USER_NAME"
 
-chmod 755 /home/$USER_NAME
-chmod -R 755 /home/$USER_NAME/bin
-chmod -R 755 /home/$USER_NAME/lib
-chmod 700 /home/$USER_NAME/home/$USER_NAME
-chmod 700 /home/$USER_NAME/home/$USER_NAME/.ssh
-chmod 600 /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa
-chmod 644 /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa.pub
-chmod 755 /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
+chmod 755 /home/"$USER_NAME"
+chmod -R 755 /home/"$USER_NAME"/bin
+chmod -R 755 /home/"$USER_NAME"/lib
+chmod 700 /home/"$USER_NAME"/home/"$USER_NAME"
+chmod 700 /home/"$USER_NAME"/home/"$USER_NAME"/.ssh
+chmod 600 /home/"$USER_NAME"/home/"$USER_NAME"/.ssh/id_rsa
+chmod 644 /home/"$USER_NAME"/home/"$USER_NAME"/.ssh/id_rsa.pub
+chmod 755 /home/"$USER_NAME"/home/"$USER_NAME"/.ssh/authorized_keys
 
 ###################################
 # Update SSHD Config

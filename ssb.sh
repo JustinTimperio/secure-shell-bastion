@@ -16,38 +16,38 @@ fi
 
 
 # Parse Args
-case $1 in
+case "$1" in
     # Takes No Args
     -l|--list)
         echo "=========================="
         echo "Secure Shell Bastion Users"
         echo "=========================="
-        . $list_users
+        . "$list_users"
         ;;
 
     # Takes User as Arg
     -n|--new_user)
-        . $jail_build $2
+        . "$jail_build" "$2"
         ;;
 
     # Takes User as Arg
     -r|--remove_user)
-        . "$jail_remove" $2
+        . "$jail_remove" "$2"
         ;;
 
     # Takes User as Arg
     -ak|--add_key)
-        . $user_add_key $2 
+        . "$user_add_key" "$2"
         ;;
 
     # Takes User as Arg
     -rk|--rm_key)
-        . $user_rm_key $2 
+        . "$user_rm_key" "$2"
         ;;
 
     # Takes User as Arg
     -sp|--show_pub)
-        . $user_show_pub $2 
+        . "$user_show_pub" "$2"
         ;;
 
     *)
