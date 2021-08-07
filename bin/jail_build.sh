@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # Startup
 DIR="$(dirname $(readlink -f $0))"
@@ -53,7 +53,7 @@ mkdir /home/$USER_NAME/etc
 cp -v /etc/passwd /home/$USER_NAME/etc/passwd
 cp -v /etc/group /home/$USER_NAME/etc/group
 
-# Clean other users from fakeroot
+# Clean traces of users from fakeroot enviro
 for USER in $(/opt/secure-shell-bastion/bin/list_users.sh); do
       if [ "$USER" != "$USER_NAME" ]; then
               sed -i "/$USER/d" /home/$USER_NAME/etc/passwd
@@ -73,7 +73,7 @@ done
 mkdir -p /home/$USER_NAME/home/$USER_NAME/.ssh
 ssh-keygen -b 4096 -f /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa -C "$USER_NAME"@bastion -N ''
 touch /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
-# vi /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
+vi /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
 
 
 ###################################
