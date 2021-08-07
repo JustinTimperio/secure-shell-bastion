@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 USER_NAME="$2"
 CHROOT="/home/$USER_NAME"
