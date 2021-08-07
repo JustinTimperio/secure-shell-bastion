@@ -1,12 +1,9 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
-USER_NAME="$1"
+# Startup
 DIR="$(dirname $(readlink -f $0))"
-
-echo ''
+USER_NAME="$1"
 echo "Building chroot jail for user '$USER_NAME'..."
-echo ''
-
 
 ###################################
 # Make Dev
@@ -25,31 +22,25 @@ mknod -m 666 random c 1 8
 # Link Each Bin to Chroot
 ###################################
 
-# Core
-"$DIR"/bin/link_bin.sh "/bin/ash"
-"$DIR"/bin/link_bin.sh "/bin/bash"
-"$DIR"/bin/link_bin.sh "/bin/ls"
-"$DIR"/bin/link_bin.sh "/bin/cp"
-"$DIR"/bin/link_bin.sh "/bin/rm"
-"$DIR"/bin/link_bin.sh "/bin/mv"
-"$DIR"/bin/link_bin.sh "/bin/cat"
-"$DIR"/bin/link_bin.sh "/bin/pwd"
-"$DIR"/bin/link_bin.sh "/bin/echo"
-"$DIR"/bin/link_bin.sh "/bin/date"
-"$DIR"/bin/link_bin.sh "/bin/mkdir"
-"$DIR"/bin/link_bin.sh "/bin/touch"
-
-# SSH
-"$DIR"/bin/link_bin.sh "/usr/bin/ssh"
-"$DIR"/bin/link_bin.sh "/usr/bin/ssh-add"
-"$DIR"/bin/link_bin.sh "/usr/bin/ssh-keygen"
-
-# Applications
-"$DIR"/bin/link_bin.sh "/bin/sed"
-"$DIR"/bin/link_bin.sh "/bin/grep"
-"$DIR"/bin/link_bin.sh "/usr/bin/vi"
-"$DIR"/bin/link_bin.sh "/usr/bin/nano"
-
+"$DIR"/bin/link_bin.sh /bin/ash "$USER_NAME"
+"$DIR"/bin/link_bin.sh /bin/ls "$USER_NAME"
+"$DIR"/bin/link_bin.sh /bin/echo "$USER_NAME"
+"$DIR"/bin/link_bin.sh /bin/cp "$USER_NAME"
+"$DIR"/bin/link_bin.sh /bin/rm "$USER_NAME"
+"$DIR"/bin/link_bin.sh /bin/mv "$USER_NAME"
+"$DIR"/bin/link_bin.sh /bin/cat "$USER_NAME"
+"$DIR"/bin/link_bin.sh /bin/mkdir "$USER_NAME"
+"$DIR"/bin/link_bin.sh /usr/bin/clear "$USER_NAME"
+"$DIR"/bin/link_bin.sh /bin/touch "$USER_NAME"
+"$DIR"/bin/link_bin.sh /bin/grep "$USER_NAME"
+"$DIR"/bin/link_bin.sh /bin/sed "$USER_NAME"
+"$DIR"/bin/link_bin.sh /usr/bin/vi "$USER_NAME"
+"$DIR"/bin/link_bin.sh /usr/bin/nano "$USER_NAME"
+"$DIR"/bin/link_bin.sh /usr/bin/ssh "$USER_NAME"
+"$DIR"/bin/link_bin.sh /usr/bin/ssh-agent "$USER_NAME"
+"$DIR"/bin/link_bin.sh /usr/bin/ssh-keyscan "$USER_NAME"
+"$DIR"/bin/link_bin.sh /usr/bin/ssh-keygen "$USER_NAME"
+"$DIR"/bin/link_bin.sh /usr/bin/ssh-add "$USER_NAME"
 
 ###################################
 # Stage New Jailed User 
@@ -63,18 +54,17 @@ cp -v /etc/passwd /home/$USER_NAME/etc/passwd
 cp -v /etc/group /home/$USER_NAME/etc/group
 
 # Clean other users from fakeroot
-#for USER in $(. /opt/secure-shell-bastion/bin/list_users.sh); do
-#       if [ $USER -ne $USER_NAME ]; then
-#               sed -i "/$USER/d" /home/$USER_NAME/etc/passwd
-#       fi
-#done
-#
-#for USER in $(. /opt/secure-shell-bastion/bin/list_users.sh); do
-#       if [ $USER -ne $USER_NAME ]; then
-#               sed -i "/$USER/d" /home/$USER_NAME/etc/group
-#       fi
-#done
+for USER in $(/opt/secure-shell-bastion/bin/list_users.sh); do
+      if [ "$USER" != "$USER_NAME" ]; then
+              sed -i "/$USER/d" /home/$USER_NAME/etc/passwd
+      fi
+done
 
+for USER in $(/opt/secure-shell-bastion/bin/list_users.sh); do
+      if [ $USER != $USER_NAME ]; then
+              sed -i "/$USER/d" /home/$USER_NAME/etc/group
+      fi
+done
 
 ###################################
 # Generate User Keys
@@ -82,7 +72,8 @@ cp -v /etc/group /home/$USER_NAME/etc/group
 
 mkdir -p /home/$USER_NAME/home/$USER_NAME/.ssh
 ssh-keygen -b 4096 -f /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa -C "$USER_NAME"@bastion -N ''
-vi /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
+touch /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
+# vi /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
 
 
 ###################################
@@ -96,10 +87,9 @@ chmod -R 755 /home/$USER_NAME/bin
 chmod -R 755 /home/$USER_NAME/lib
 chmod 700 /home/$USER_NAME/home/$USER_NAME
 chmod 700 /home/$USER_NAME/home/$USER_NAME/.ssh
-# chmod 600 /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa
-# chmod 644 /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa.pub
-# chmod 755 /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
-
+chmod 600 /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa
+chmod 644 /home/$USER_NAME/home/$USER_NAME/.ssh/id_rsa.pub
+chmod 755 /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys
 
 ###################################
 # Update SSHD Config
@@ -109,7 +99,7 @@ echo "  ChrootDirectory /home/$USER_NAME" >> /etc/ssh/sshd_config
 echo "  AuthorizedKeysFile /home/$USER_NAME/home/$USER_NAME/.ssh/authorized_keys" >> /etc/ssh/sshd_config
 /etc/init.d/sshd restart
 
-
 echo ''
 echo "Built chroot jail for user $USER_NAME!"
 echo ''
+

@@ -18,10 +18,10 @@ fi
 # Parse Args
 case $1 in
     # Takes No Args
-    -l|--list_users)
-	echo "=========================="
-	echo "Secure Shell Bastion Users"
-	echo "=========================="
+    -l|--list)
+        echo "=========================="
+        echo "Secure Shell Bastion Users"
+        echo "=========================="
         . $list_users
         ;;
 
@@ -36,12 +36,12 @@ case $1 in
         ;;
 
     # Takes User as Arg
-    -ak|-add_key)
+    -ak|--add_key)
         . $user_add_key $2 
         ;;
 
     # Takes User as Arg
-    -rk|-rm_key)
+    -rk|--rm_key)
         . $user_rm_key $2 
         ;;
 

@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 
-dir="$(dirname $(readlink -f $0))"
-source "$dir/config.sh"
-CHROOT="/home/$NAME"
+USER_NAME="$2"
+CHROOT="/home/$USER_NAME"
+BIN_DIR="$(dirname $(readlink -f $1))"
 
-path="$(dirname $(readlink -f $*))"
-mkdir -p $CHROOT$path
-cp -v $* $CHROOT$*
+mkdir -p $CHROOT$BIN_DIR
+cp -v $1 $CHROOT$1
 
 for i in $( ldd $* | grep -v dynamic | cut -d " " -f 3 | sed 's/://' | sort | uniq )
   do
