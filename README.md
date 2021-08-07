@@ -1,4 +1,7 @@
 # Secure Shell Bastion (SSB)
+![GitHub](https://img.shields.io/github/license/JustinTimperio/secure-shell-bastion)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/c78415ffa2664e1294dc470d1d5c226d)](https://www.codacy.com/gh/JustinTimperio/secure-shell-bastion/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=JustinTimperio/secure-shell-bastion&amp;utm_campaign=Badge_Grade)
+
 Secure-Shell-Bastion (SSB) is a fully automated tool for generating jailed chroot enviroments for ssh users. This is most commonly refered to as a "SSH Bastion", which acts a secure singular endpoint for external users to verify themselvs and safely reach unexposed infustructure (typically behind a firewall). SSB leverages the extreamly lightweight and powerful features of Alpine Linux and MUSL to generate entire chroot in less than 10MB. This means a single SSB can service hundereds of users safely on exreamly small VM's (1 core - 512MB Ram - 10GB disk). 
 
 # How SSB Works
